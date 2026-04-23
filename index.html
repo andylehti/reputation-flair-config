@@ -310,7 +310,7 @@ a { color:#9bc0ff; }
   <div class="topBar">
     <div>
       <h1>Reputation Flair settings builder</h1>
-      <p>Paste your current config, walk through the setup one step at a time, or switch to a single-page editor. This builds the single <b>rfConfig</b> value for Devvit in plain language for subreddit moderators.</p>
+      <p>Paste your current config, walk through the setup one step at a time, or switch to a single-page editor. This dynamic setup helps build the single <b>rfConfig</b> value for Reputation-Flair for Subreddit Moderators.</p>
     </div>
       </div>
   <div id="app"></div>
@@ -790,7 +790,7 @@ function importSection() {
           ${importStatus ? `<div class="${importStatus.startsWith('Loaded') || importStatus.startsWith('Config loaded') ? 'okBox' : 'warnBox'}">${importStatus}</div>` : ''}
         </div>
         <div class="stack">
-          <div class="callout"><b>The recommended config is already loaded.</b> It turns on high traffic mode, reputation mod-note updates, automatic flair, preserved flair text, reputation-based flair color, post + comment count, OP self-reply protection, review, removal, and human verification with reminder mode.</div>
+          <div class="callout"><b>The recommended config is already loaded.</b></div>
           <div class="subCard stack">
             <div><b>Quick defaults</b></div>
             <ul class="summaryList compactList">
@@ -1026,9 +1026,9 @@ function emojiSetupSection() {
           <small>Turn on the subreddit emoji toggle first.</small>
         </div>
         <div class="subCard stack">
-          <div><b>Step 2 — upload vrf.png and keep only User flair on</b></div>
+          <div><b>Step 2 — add new emoji, and upload vrf.png and keep "only User flair" checked on</b></div>
           <img class="guideShot" src="${vrfSettingsData}" alt="VRF emoji settings screenshot">
-          <small>Name it <b>vrf</b>, keep <b>User flair</b> on, and leave <b>Post flair</b> and <b>Mod only</b> off.</small>
+          <small>Name it <b>vrf</b>, keep <b>User flair</b> on, and press save <b>Post flair</b> off and <b>Mod only</b> on.</small>
         </div>
       </div>
     </section>`;
