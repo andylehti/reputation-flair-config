@@ -1,0 +1,1209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reputation Flair Config Builder</title>
+<style>
+:root {
+  --bg: #0f1115;
+  --panel: #171b23;
+  --panel2: #1f2530;
+  --text: #eef2f7;
+  --muted: #9ca8bb;
+  --line: #2d3646;
+  --accent: #6fa3ff;
+  --accent2: #3058a6;
+  --good: #2ea043;
+  --warn: #d29922;
+  --bad: #da3633;
+  --shadow: 0 18px 44px rgba(0,0,0,0.28);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font: 14px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, #152031 0, #10141b 34%, #0d1015 100%);
+  color: var(--text);
+}
+main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(14px, 2vw, 28px);
+}
+.card {
+  background: linear-gradient(180deg, rgba(23,27,35,0.98), rgba(31,37,48,0.98));
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: clamp(16px, 2.2vw, 24px);
+  box-shadow: var(--shadow);
+}
+.stack { display: grid; gap: 16px; }
+.hidden { display: none !important; }
+.topBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.topBar h1 { margin: 0 0 8px; font-size: clamp(24px, 4vw, 34px); line-height: 1.1; }
+.topBar p { margin: 0; color: var(--muted); max-width: 840px; }
+.segment, .pills, .checks, .radios, .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.segment button, .pills button, .nav button, .inlineBtn, .ghostBtn, .primaryBtn {
+  border: 1px solid #3a4c6f;
+  background: #1f2b42;
+  color: var(--text);
+  min-height: 42px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 120ms ease, filter 120ms ease, border-color 120ms ease;
+}
+button:hover { filter: brightness(1.08); }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+.segment button.active, .pills button.active {
+  background: linear-gradient(180deg, var(--accent), var(--accent2));
+  border-color: #84b2ff;
+}
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.field { display: grid; gap: 7px; }
+label.title { font-weight: 700; }
+label.inline, .checks label, .radios label { display: inline-flex; align-items: center; gap: 8px; }
+input[type="text"], input[type="number"], select, textarea {
+  width: 100%;
+  background: #0f131a;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 11px 12px;
+}
+textarea { min-height: 160px; resize: vertical; }
+small, .muted { color: var(--muted); }
+.sectionTitle { margin: 0 0 6px; font-size: 20px; }
+.sectionLead { margin: 0 0 14px; color: var(--muted); }
+.stepDots { display: flex; gap: 10px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
+.stepDot {
+  flex: 0 0 auto;
+  min-width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  background: #18202e;
+  border: 1px solid #33435f;
+  color: var(--muted);
+  font-weight: 700;
+}
+.stepDot.active { background: #233559; color: white; border-color: #84b2ff; }
+.stepDot.done { background: #183625; color: #baf7c8; border-color: #2ea043; }
+.subCard {
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 16px;
+  padding: 14px;
+}
+.sliderRow {
+  display: grid;
+  grid-template-columns: 1fr 64px;
+  gap: 10px;
+  align-items: center;
+}
+.valueBox {
+  text-align: center;
+  padding: 8px 0;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #10151d;
+  font-weight: 700;
+}
+.callout {
+  border-left: 4px solid var(--accent);
+  padding: 10px 12px;
+  background: rgba(111,163,255,0.08);
+  border-radius: 10px;
+}
+.warnBox {
+  border-left: 4px solid #e5534b;
+  padding: 10px 12px;
+  background: rgba(229,83,75,0.08);
+  border-radius: 10px;
+}
+.okBox {
+  border-left: 4px solid #2ea043;
+  padding: 10px 12px;
+  background: rgba(46,160,67,0.08);
+  border-radius: 10px;
+}
+.previewCard {
+  background: linear-gradient(180deg, #101722, #0d131b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+}
+.previewPost {
+  display: grid;
+  gap: 12px;
+}
+.previewHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #7aa2ff, #4767b5);
+}
+.previewMeta {
+  display: flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.username { font-weight: 700; }
+.redditFlair {
+  display: inline-flex;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 6px 16px rgba(0,0,0,0.18);
+}
+.redditFlair img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #11161f;
+}
+.chip input { margin: 0; }
+.hr { height: 1px; background: var(--line); margin: 16px 0; }
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  position: sticky;
+  bottom: 10px;
+  z-index: 5;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  background: rgba(14,18,25,0.88);
+  backdrop-filter: blur(12px);
+}
+.navLeft, .navRight { display: flex; gap: 10px; flex-wrap: wrap; }
+.primaryBtn { background: linear-gradient(180deg, var(--accent), var(--accent2)); border-color: #84b2ff; }
+.ghostBtn { background: #111722; }
+.summaryList { margin: 0; padding-left: 18px; color: var(--muted); }
+.codeBlock {
+  width: 100%;
+  min-height: 180px;
+  font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: #0b0f15;
+}
+.tiny { font-size: 12px; }
+.inlineHelp { margin-top: 6px; }
+.modeWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.disabledBlock { opacity: 0.58; }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #152033;
+  border: 1px solid #31466d;
+  color: #cfe0ff;
+  font-size: 12px;
+}
+@media (max-width: 900px) {
+  .grid2, .grid3 { grid-template-columns: 1fr; }
+  .nav { flex-direction: column; align-items: stretch; }
+  .navLeft, .navRight { justify-content: stretch; }
+  .previewMeta { align-items: flex-start; }
+}
+@media (max-width: 700px) {
+  body { font-size: 15px; }
+  .segment button, .pills button, .nav button, .inlineBtn, .ghostBtn, .primaryBtn { flex: 1 1 calc(50% - 10px); }
+  .checks, .radios, .chips { gap: 8px; }
+  .chip { width: 100%; justify-content: flex-start; }
+  .previewHeader { align-items: flex-start; }
+  .previewMeta { flex-direction: column; gap: 8px; }
+  .redditFlair { max-width: 100%; }
+  .stepDot { min-width: 38px; height: 38px; }
+}
+@media (max-width: 480px) {
+  main { padding: 12px; }
+  .card, .subCard, .previewCard { border-radius: 16px; }
+  .sliderRow { grid-template-columns: 1fr 56px; }
+  .badge { width: 100%; justify-content: center; }
+}
+
+.assetRow { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+.assetPreview {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background: rgba(255,255,255,0.04);
+}
+.largeAsset img { width:56px !important; height:56px !important; }
+.guideShot {
+  width:100%;
+  display:block;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:#0d131b;
+}
+.installGrid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px; }
+.installTop { align-items:start; }
+.compactList { margin:0; padding-left:18px; }
+.compactList li + li { margin-top:6px; }
+a { color:#9bc0ff; }
+.inlineBtn { text-decoration:none; display:inline-flex; align-items:center; justify-content:center; }
+
+@media (max-width: 920px) { .installGrid, .grid2, .grid3 { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .assetRow { align-items:stretch; } .assetRow > * { width:100%; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="topBar">
+    <div>
+      <h1>Reputation Flair settings builder</h1>
+      <p>Paste your current config, walk through the setup one step at a time, or switch to a single-page editor. This builds the single <b>rfConfig</b> value for Devvit in plain language for subreddit moderators.</p>
+    </div>
+      </div>
+  <div id="app"></div>
+</main>
+<script>
+const vrfData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAqZQTFRFAAAAOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtOLDtJ3XaNQAAAOJ0Uk5TAAEIJVyextzHoF8mCQITULDl+v/nslMUBSJmv/fBaCMpgd3734QrBCyN19mSMA08+aVCEE2t9Pa1WAwZc8DxyGQfdNrQJwM+qem0SQsVGiQ6is340pBgO0SAhoefxf3moYt+Y0EK7/zteSHjlS2X8P7sohKIS3difS5Faepemo7Ye09wRyq6D1KzIIXWbBuDf+FOWuTgV8xrHonu86Ndj1URxBbKGGcHTLvOvKr16FaxVFvRWb3Vcs/rlGUOyxcoSrm4wmHiBparM0Bqt1HTmJN2Rp2bmXyCOD+stnjbdZzUwyj/ZssAAAf0SURBVHic7Zt7UBNHGMBvwaKIKVdxFJT4GGhjRVGpokJLAmqwErHV+Kht8FFRAWFadBRBZSoWtR0RlaIiVEYcQaUPIfGBIhkfrW+LCgKjFUS01aI8o4TH9cIFDUl2c5ec+M/tP7m7vd3vd7e7337fd18A9pYL4AA4AA6AA+AAOAAOgAPgADgADoBxA6pQv41ElwPwtPIxjLAif1X1XQzgqJH+QntiSx43/dOlAI49SJk1r05x8qzOQgJGAALNI9foXMBJoKeWETABcAfF/V7oXeOTTNe6BgB4kLLuGVx2Ja/+acFioA3AcyclFRmpcCHn4qPSNw/gC0B1pdEafMg911NvGkAMwKXeNZBKYhw5D8ydijAAnhA80x46ACCfBqruInoRadRDdkC19rQ3oaA9K4wCgIDjs84KgbZOZQfkHwgUyG4Czkw8NBeoqROCXJwKSSo9BmMA4gt9qxaAbFrtjRcpCQAyaKlpIwDiB2OsC43PN/qF7w129aRDYAggJvXdAQvFk0UGTpS10RgFAwCew4yrxpY78xLU3D3BNIEBgLu46DIr8jFZc89dDcwBBnsUwtY708L3aUlmDCDgWRnqe3NLgyzN5BjoA6ywVmewBsD3f7aXKYCvWyZr8jEsuCiXKcCgR++yCOBfcYExwCfHWQSYUs4BcAAcAGOA6e+ZVB0Mik9rDlOANYWXWAT4tP4oU4DosgIWAeqn/s4UIAbsYhGgbXkcQwCrtUVKcyTJlJ5WTw1buk7JMuUz6QH0Da0xZzcOqPIBl8afrtU3ZQNUo9YyARAEgcPmmMPSexN6brd3CCxS6I+oyHODdx5tALAF1JozA/AQEKsx/hJA6RH9Os+SwUqkVaQL0G8NKDbDHZFVj029qTmQ+INY/Uqpe2VyHU2Aj2xsHpphj+Ldq6Ki2x/SfegpK8Nq5zlpqAjGawBHye02M+xRmQAk36Je8h4Aogxv2JI6XI5wnV8BOC50TUE5wBDxyuYVEZTxD+L7HXMwNoKu6hZEHKkDwLFHrFzJWD5mG2ObLac6Sg/xcjE+g/gtangsTQvAW3ej8F8z5MerFNTmBfYndyuCBRsc1epnMEeVagPSixPtmIeNXcNTg5e198xL2v3QCTqDcLBhWT1kMVJSMwEIYS5f5nXtzktKzbjbRf7oBdehuDpsI8RNpMSG+oEl0Nb89TfPhS024JNVTuedp9xfEFkpPaREsdomzWxFARwt3wBtS/h1n3Ng4PGP9ScYP65KTs0/rNeq+NnoEA4mES5CASx/rITK37Fkr/Lx89Vbh3YmIFTZZZHUYUZjzwRTWwhR34wCUARBW3416grpY4MRNbvzdMdY5uz2Vzw1syXzekeZ3sLq1SiA3AXQhpIK/zWa32D+uHk6l13WH9U6vla88Acm3r+mNDSZCQB2VLQDYJlE2oAOQbI/hIXaXVa8IMxwAzBS7P9GARxZBm3oNuonbaypV9K6qdQ8IKKH7qDkgwA3YRaN58ewxpcogLw9SlhDPLHHCW2s6XRg7iyg0f8lv/1KvX8gGRs/gNYOSgSmowD6xsCXIT7aZfIk6lByeT853UQLwC1qVIDHnZkF+l8QIHL8DqMAfjgTDFdEoosD+8gphZNfdkHF91CpYqn53y+tsf42LRtSVLXJFwWQ6QQ+h6tifvQ3Q+zaxxzE2w8H/6Vp97++1j+H0bNgpKoZMqQqBukusTfgBKLc9G+faJVuLWa/lWoTP6IbjfXfLj/oolKO3IzI7bhk2CZ4D7ae3e5dpwguYN7UgSR/XzRNC65hZ8hEmG38yiAZ8XCYEt4F7uXm49XpSvCIK8LV9OQTipxpXrDK1ybZrHe84RMRExHeE3Q7Ea+f1EdKz4exzQat3lDTXMcozSlwQDwSLit+8dpztzqAh9N8/yl9Tkqgz9/ZLP/6EMosl75/50kHgeSc1TRa+o8ET6ko2oqo1536XjbdrqPsIon11XYHBMtYvYiuB0X4CXwnoW7o5JqJAvNQoXqpE28COZjArqD6IM3nx0Ls76M/3XR2Tpv2R6BWNr5JZe0yY2tlf5P2R0fhp57cj3bQ9V75NdkY1LPx47JOLa+bN4muARvgbhNh4ha9rjKHblQi7yeGj86gbz+LnOYhFoAxAGxgEJshmr28yaZu0QeY28JmkEoY5ckUgN0wnSI/hikAu4HKL51XMQVgN1SbucnkgHIAHAAH8GY/XOZfWsoUgN1Pt2Z8MVkRtI+9j9d46EikNWQMQPBdA01jm0bJ4XmbTCMx2NsLSmLYSvPkl6ohkSkUgPtwaTBLAJKIWDlzAF7O1CUsJNGQZXPlnidmJLFg4nKx+hfLxcvctjudNieNhyQQBvoMsjyRafEqgP5YAwXAAG/ljMB3LUHg1+XOL4NFh00DYGBx3mSH+eAEdXYl+nmW31ETyWylZY3E7DHUyZTDE9MtSmajGHIyH2uPVxac6n7CVDqfQnzDOZQ6c/qsjX7GM92Exp3g+/PQhMbQ+VVz2U5oNCihkWCs8Zvx0YXN5WaKZwAg7pEoHGIsyy0FXyjJ74KkVgyk12YsNdwnbA/eTbxvQYY5o8TmDzfP1Z+KhCc+ABV/YBWAVFFXt3notsDztslaTbmfLAJgjvVXwnXiidJhlU1fWCafaXq/oH/cWUFHME2U8GT8OXj8640AYLyk2zNbwzRqmph2DICRdNQ9qwAYOBiZPLgh/4hHVlTC2/iLB+uFA+AA/gflz5WfLF6jbwAAAABJRU5ErkJggg==';
+const enableEmojiData = 'data:image/png;base64,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';
+const vrfSettingsData = 'data:image/png;base64,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';
+const defaults = {
+  enableHighTrafficMode: true,
+  customBadTerms: [],
+  enableExtremeNormalization: false,
+  updateReputationModNotes: true,
+  negativeScoreFade: 'low',
+  streakMode: 'noexpire',
+  threshRegular: 10,
+  threshPro: 20,
+  threshElite: 30,
+  protectOpSelfReplies: true,
+  ownPostCommentGoodCap: 5,
+  badPointCapLimit: 5,
+  enableFlairUpdates: true,
+  preserveCustomFlairText: true,
+  style: 'new',
+  showPostCommentCount: true,
+  colorFlairByReputation: true,
+  flairParts: ['streak','head','rep','warn','activity'],
+  enableReviewFilter: true,
+  reviewFilterMinBadPoints: 4,
+  reviewFilterCategories: 3,
+  ignoreModerators: true,
+  ignoreApprovedUsers: false,
+  enableRemoveFilter: true,
+  removeFilterMinBadPoints: 8,
+  removeFilterCategories: 5,
+  removeIgnoreModerators: false,
+  removeIgnoreApprovedUsers: false,
+  enableHumanVerification: true,
+  useHumanVerified: true,
+  enableVerifyHumanMenu: true,
+  enableHumanVerificationReminder: true,
+  humanVerificationReminderInterval: '12h',
+  verificationRemovePostsUntilVerified: false,
+  verificationRemoveCommentsUntilVerified: false,
+  approveVerificationRemovedWhenVerified: false,
+  layoutMode: 'wizard',
+  previewTone: 'good',
+  subredditName: ''
+};
+const app = document.getElementById('app');
+const symbols = { rep: '⚖️', warn: '⚠️', activity: '⌨️' };
+let state = JSON.parse(JSON.stringify(defaults));
+let stepIndex = 0;
+let importText = '';
+let importStatus = '';
+let copiedStatus = '';
+let flairPartsTouched = false;
+function normalizeKeyName(key) {
+  return String(key ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+function toBoolValue(value, fallback = false) {
+  if (typeof value === 'boolean') return value;
+  const text = String(value ?? '').trim().toLowerCase();
+  if (!text) return fallback;
+  if (['1','true','yes','y','on','enabled'].includes(text)) return true;
+  if (['0','false','no','n','off','disabled'].includes(text)) return false;
+  return fallback;
+}
+function clampInt(value, fallback, min, max) {
+  const n = Math.floor(Number(value));
+  if (!Number.isFinite(n)) return fallback;
+  return Math.max(min, Math.min(max, n));
+}
+function cleanSubredditName(value) {
+  return String(value ?? '').trim().replace(/^https?:\/\/www\.reddit\.com\/r\//i, '').replace(/^https?:\/\/reddit\.com\/r\//i, '').replace(/^r\//i, '').replace(/^\/r\//i, '').replace(/^\/u\//i, '').replace(/[^A-Za-z0-9_]/g, '');
+}
+function emojiSettingsUrl() {
+  const sub = cleanSubredditName(state.subredditName);
+  return sub ? `https://www.reddit.com/mod/${sub}/emojis` : '';
+}
+function toListValue(value, limit = 100) {
+  if (Array.isArray(value)) return value.map(v => String(v ?? '').trim()).filter(Boolean).slice(0, limit);
+  if (typeof value === 'string') return value.split(/[\n,|]/).map(v => v.trim()).filter(Boolean).slice(0, limit);
+  return [];
+}
+function parseLooseJson(value) {
+  const text = String(value ?? '').trim();
+  if (!text) return null;
+  if ((text.startsWith('{') && text.endsWith('}')) || (text.startsWith('[') && text.endsWith(']'))) {
+    try { return JSON.parse(text); } catch {}
+  }
+  return null;
+}
+function flattenEntries(value, prefix = '', out = []) {
+  if (Array.isArray(value)) {
+    out.push([prefix, value]);
+    return out;
+  }
+  if (!value || typeof value !== 'object') return out;
+  for (const [key, entry] of Object.entries(value)) {
+    const next = prefix ? `${prefix}.${key}` : key;
+    if (entry && typeof entry === 'object' && !Array.isArray(entry)) flattenEntries(entry, next, out);
+    else out.push([next, entry]);
+  }
+  return out;
+}
+function decayLevelFromAny(value, fallback = 'medium') {
+  const key = normalizeKeyName(value);
+  if (['off','none','disabled','0'].includes(key)) return 'off';
+  if (['low','light','slow','1','2'].includes(key)) return 'low';
+  if (['medium','normal','balanced','5'].includes(key)) return 'medium';
+  if (['high','fast','aggressive','10'].includes(key)) return 'high';
+  return fallback;
+}
+function normalizeFlairParts(value, fallback) {
+  const alias = {
+    streak: 'streak', days: 'streak', badge: 'streak',
+    head: 'head', flair: 'head', label: 'head',
+    rep: 'rep', reputation: 'rep', score: 'rep',
+    warn: 'warn', warning: 'warn', warnings: 'warn', offenses: 'warn',
+    activity: 'activity', count: 'activity', counts: 'activity',
+    good: 'good', plus: 'good', positive: 'good',
+    bad: 'bad', minus: 'bad', negative: 'bad'
+  };
+  const items = toListValue(value, 20).map(v => alias[normalizeKeyName(v)]).filter(Boolean);
+  const out = [];
+  for (const item of items) if (!out.includes(item)) out.push(item);
+  return out.length ? out : fallback.slice();
+}
+function defaultFlairParts(style, showCount) {
+  if (style === 'old') return showCount ? ['streak','head','activity','good','bad'] : ['streak','head','good','bad'];
+  return showCount ? ['streak','head','rep','warn','activity'] : ['streak','head','rep','warn'];
+}
+function assignImported(config, key, value) {
+  const name = normalizeKeyName(key);
+  if (!name) return;
+  if (['enablehightrafficmode','hightraffic'].includes(name)) { config.enableHighTrafficMode = toBoolValue(value, config.enableHighTrafficMode); return; }
+  if (['updatereputationmodnotes','modnotes','reputationmodnotes'].includes(name)) { config.updateReputationModNotes = toBoolValue(value, config.updateReputationModNotes); return; }
+  if (['enableflairupdates','flairenabled','updateflair','enableflair'].includes(name)) { config.enableFlairUpdates = toBoolValue(value, config.enableFlairUpdates); return; }
+  if (['preserveuserflair','preserveflair','keepuserflair','preservecustomflairtext'].includes(name)) { config.preserveCustomFlairText = toBoolValue(value, config.preserveCustomFlairText); return; }
+  if (['style','flairstyle','flairdisplaystyle'].includes(name)) {
+    const k = normalizeKeyName(value);
+    config.style = ['old','points','classic','legacy','activitypoints'].includes(k) ? 'old' : 'new';
+    return;
+  }
+  if (['showpostcommentcount','showactivitycount','showactivity','showpostcommentactivity'].includes(name)) { config.showPostCommentCount = toBoolValue(value, config.showPostCommentCount); return; }
+  if (['colorflairbyreputation','colorbyreputation','flaircolor'].includes(name)) { config.colorFlairByReputation = toBoolValue(value, config.colorFlairByReputation); return; }
+  if (['flairparts','flairfields','flairstats','flairmetrics','parts'].includes(name)) { config.flairParts = normalizeFlairParts(value, config.flairParts || defaultFlairParts(config.style, config.showPostCommentCount)); return; }
+  if (['custombadterms','customterms','badterms'].includes(name)) { config.customBadTerms = toListValue(value, 50); return; }
+  if (['enableextremenormalization','extremenormalization'].includes(name)) { config.enableExtremeNormalization = toBoolValue(value, config.enableExtremeNormalization); return; }
+  if (['negativescorefade','negativefade','badscorefade','fadenegativescores'].includes(name)) { config.negativeScoreFade = decayLevelFromAny(value, config.negativeScoreFade); return; }
+  if (['weeklydecay','decay'].includes(name)) { config.negativeScoreFade = decayLevelFromAny(value, config.negativeScoreFade); return; }
+  if (['gracemode','streakmode','streakexpiry'].includes(name)) {
+    const k = normalizeKeyName(value);
+    if (['noexpire','none','never','noexpiry'].includes(k)) config.streakMode = 'noexpire';
+    else if (['hourly24','48h','48hr','48hrs','48hours','48hourswithoutposting','48hrswithoutposting'].includes(k)) config.streakMode = 'hourly24';
+    else if (['hourly48','72h','72hr','72hrs','72hours','72hourswithoutposting','72hrswithoutposting'].includes(k)) config.streakMode = 'hourly48';
+    return;
+  }
+  if (['threshregular','regularthreshold'].includes(name)) { config.threshRegular = clampInt(value, config.threshRegular, 0, 999); return; }
+  if (['threshpro','prothreshold'].includes(name)) { config.threshPro = clampInt(value, config.threshPro, 0, 999); return; }
+  if (['threshelite','elitethreshold'].includes(name)) { config.threshElite = clampInt(value, config.threshElite, 0, 999); return; }
+  if (['excludeownpostcommentnegatives','protectopreplies','protectopselfreplies'].includes(name)) { config.protectOpSelfReplies = toBoolValue(value, config.protectOpSelfReplies); return; }
+  if (['ownpostcommentgoodcap','opreplygoodcap','maxgoodpointsperopselfreply'].includes(name)) { config.ownPostCommentGoodCap = clampInt(value, config.ownPostCommentGoodCap, 0, 10); return; }
+  if (['badpointcaplimit','modbadpointcap','moderatoronlyperitembadpointcap'].includes(name)) { config.badPointCapLimit = clampInt(value, config.badPointCapLimit, 0, 100); return; }
+  if (['enablereviewfilter','reviewenabled'].includes(name)) { config.enableReviewFilter = toBoolValue(value, config.enableReviewFilter); return; }
+  if (['reviewfilterminbadpoints','reviewminbadpoints','reviewpoints','reviewnegativepoints'].includes(name)) { config.reviewFilterMinBadPoints = clampInt(value, config.reviewFilterMinBadPoints, 0, 100); return; }
+  if (['reviewfiltercategories','reviewcategories','reviewcategorycount'].includes(name)) { config.reviewFilterCategories = clampInt(value, config.reviewFilterCategories, 0, 6); return; }
+  if (['ignoremoderators','reviewignoremoderators','reviewignoremods'].includes(name)) { config.ignoreModerators = toBoolValue(value, config.ignoreModerators); return; }
+  if (['ignoreapprovedusers','reviewignoreapprovedusers','reviewignoreapproved'].includes(name)) { config.ignoreApprovedUsers = toBoolValue(value, config.ignoreApprovedUsers); return; }
+  if (['enableremovefilter','removalenabled','removeenabled','removalfilterenabled'].includes(name)) { config.enableRemoveFilter = toBoolValue(value, config.enableRemoveFilter); return; }
+  if (['removefilterminbadpoints','removeminbadpoints','removepoints','removalnegativepoints'].includes(name)) { config.removeFilterMinBadPoints = clampInt(value, config.removeFilterMinBadPoints, 0, 100); return; }
+  if (['removefiltercategories','removecategories','removecategorycount'].includes(name)) { config.removeFilterCategories = clampInt(value, config.removeFilterCategories, 0, 6); return; }
+  if (['removeignoremoderators','removalignoremoderators','removeignoremods'].includes(name)) { config.removeIgnoreModerators = toBoolValue(value, config.removeIgnoreModerators); return; }
+  if (['removeignoreapprovedusers','removalignoreapprovedusers','removeignoreapproved'].includes(name)) { config.removeIgnoreApprovedUsers = toBoolValue(value, config.removeIgnoreApprovedUsers); return; }
+  if (['enablehumanverification','humanverificationenabled','verificationenabled'].includes(name)) { config.enableHumanVerification = toBoolValue(value, config.enableHumanVerification); return; }
+  if (['enablehumanverificationbadge','humanverificationbadge','verifybadge','usehumanverified'].includes(name)) { config.useHumanVerified = toBoolValue(value, config.useHumanVerified); return; }
+  if (['enableverifyhumanmenu','verifyhumanmenu','addverifyhumanbutton'].includes(name)) { config.enableVerifyHumanMenu = toBoolValue(value, config.enableVerifyHumanMenu); return; }
+  if (['enablehumanverificationreminder','humanverificationreminder','remindunverifiedusers'].includes(name)) { config.enableHumanVerificationReminder = toBoolValue(value, config.enableHumanVerificationReminder); return; }
+  if (['humanverificationreminderinterval','verifyreminderinterval','reminderinterval','reminderfrequency'].includes(name)) {
+    const v = String(value ?? '').trim();
+    if (['1h','12h','1d','1w'].includes(v)) config.humanVerificationReminderInterval = v;
+    return;
+  }
+  if (['verificationremovepostsuntilverified','removepostsuntilverified'].includes(name)) { config.verificationRemovePostsUntilVerified = toBoolValue(value, config.verificationRemovePostsUntilVerified); return; }
+  if (['verificationremovecommentsuntilverified','removecommentsuntilverified'].includes(name)) { config.verificationRemoveCommentsUntilVerified = toBoolValue(value, config.verificationRemoveCommentsUntilVerified); return; }
+  if (['approveverificationremovedwhenverified','approveverificationremovedcontentwhenverified','restoreverificationremovedwhenverified','approvepreviouslyverificationremoved'].includes(name)) { config.approveVerificationRemovedWhenVerified = toBoolValue(value, config.approveVerificationRemovedWhenVerified); return; }
+}
+function parseLineConfig(text) {
+  const config = JSON.parse(JSON.stringify(defaults));
+  const lines = String(text ?? '').split(/\n|;/).map(v => v.trim()).filter(Boolean);
+  for (const line of lines) {
+    const match = line.match(/^([a-z0-9_. -]+)\s*[:=]\s*(.+)$/i);
+    if (!match) continue;
+    const key = match[1].trim();
+    const rawValue = match[2].trim();
+    const parsed = parseLooseJson(rawValue);
+    assignImported(config, key, parsed ?? rawValue);
+  }
+  return config;
+}
+function parseConfigBlob(blob) {
+  const text = String(blob ?? '').trim();
+  if (!text) return JSON.parse(JSON.stringify(defaults));
+  const parsed = parseLooseJson(text);
+  if (parsed && !Array.isArray(parsed) && typeof parsed === 'object') {
+    const config = JSON.parse(JSON.stringify(defaults));
+    for (const [key, value] of flattenEntries(parsed)) assignImported(config, key, value);
+    return config;
+  }
+  if (Array.isArray(parsed)) {
+    const config = JSON.parse(JSON.stringify(defaults));
+    for (const item of parsed) {
+      if (typeof item === 'string') Object.assign(config, parseLineConfig(item));
+      else if (item && typeof item === 'object') for (const [key, value] of flattenEntries(item)) assignImported(config, key, value);
+    }
+    return config;
+  }
+  return parseLineConfig(text);
+}
+function decayToWeekly(level) {
+  if (level === 'off') return 0;
+  if (level === 'low') return 2;
+  if (level === 'high') return 10;
+  return 5;
+}
+function enforceState() {
+  state.subredditName = cleanSubredditName(state.subredditName);
+  if (!Array.isArray(state.flairParts) || !state.flairParts.length) state.flairParts = defaultFlairParts(state.style, state.showPostCommentCount);
+  const hasVerificationSub = !!(state.useHumanVerified || state.enableVerifyHumanMenu || state.enableHumanVerificationReminder || state.verificationRemovePostsUntilVerified || state.verificationRemoveCommentsUntilVerified || state.approveVerificationRemovedWhenVerified);
+  if (hasVerificationSub) state.enableHumanVerification = true;
+  state.useHumanVerified = !!state.enableHumanVerification;
+  if (!state.enableHumanVerification) {
+    state.enableVerifyHumanMenu = false;
+    state.enableHumanVerificationReminder = false;
+    state.verificationRemovePostsUntilVerified = false;
+    state.verificationRemoveCommentsUntilVerified = false;
+    state.approveVerificationRemovedWhenVerified = false;
+  }
+  if (state.verificationRemovePostsUntilVerified || state.verificationRemoveCommentsUntilVerified) {
+    state.enableHumanVerificationReminder = false;
+  }
+  if (!(state.verificationRemovePostsUntilVerified || state.verificationRemoveCommentsUntilVerified)) {
+    state.approveVerificationRemovedWhenVerified = false;
+  }
+  if (!state.enableHumanVerificationReminder) state.humanVerificationReminderInterval = state.humanVerificationReminderInterval || '12h';
+  if (!state.enableReviewFilter) {
+    state.ignoreModerators = false;
+    state.ignoreApprovedUsers = false;
+  }
+  if (!state.enableRemoveFilter) {
+    state.removeIgnoreModerators = false;
+    state.removeIgnoreApprovedUsers = false;
+  }
+  if (state.enableRemoveFilter && state.enableReviewFilter) {
+    if (state.removeFilterMinBadPoints > 0) state.removeFilterMinBadPoints = Math.max(state.removeFilterMinBadPoints, Math.min(10, state.reviewFilterMinBadPoints + 1));
+    if (state.removeFilterCategories > 0) state.removeFilterCategories = Math.max(state.removeFilterCategories, Math.min(6, state.reviewFilterCategories + 1));
+  }
+  if (state.threshRegular > state.threshPro) state.threshPro = state.threshRegular;
+  if (state.threshPro > state.threshElite) state.threshElite = state.threshPro;
+}
+function setState(patch) {
+  Object.assign(state, patch);
+  enforceState();
+  render();
+}
+function setFlairPart(part, checked) {
+  const parts = state.flairParts.slice();
+  flairPartsTouched = true;
+  if (checked && !parts.includes(part)) parts.push(part);
+  if (!checked) state.flairParts = parts.filter(v => v !== part);
+  else state.flairParts = parts;
+  enforceState();
+  render();
+}
+function maybeResetFlairDefaults(force = false) {
+  if (force || !flairPartsTouched) {
+    state.flairParts = defaultFlairParts(state.style, state.showPostCommentCount);
+    if (force) flairPartsTouched = false;
+  }
+}
+function getSteps() {
+  const steps = [
+    { id: 'import', title: 'Import or start fresh' },
+    { id: 'flair', title: 'Flair' },
+    { id: 'detection', title: 'Detection strength' },
+    { id: 'review', title: 'Review' },
+    { id: 'removal', title: 'Removal' },
+    { id: 'protections', title: 'Protections and caps' },
+    { id: 'behavior', title: 'Reputation behavior' },
+    { id: 'verification', title: 'Verification' }
+  ];
+  if (state.enableHumanVerification) steps.push({ id: 'emojiSetup', title: 'Install vrf emoji' });
+  steps.push({ id: 'summary', title: 'Summary' });
+  return steps;
+}
+function getConflicts() {
+  const issues = [];
+  if (state.enableFlairUpdates && state.flairParts.length === 0) issues.push('Choose at least one flair part or turn off flair updates.');
+  if (state.enableReviewFilter && state.reviewFilterMinBadPoints === 0 && state.reviewFilterCategories === 0) issues.push('Review is on, but both review thresholds are 0. Set at least one review threshold above 0.');
+  if (state.enableRemoveFilter && state.removeFilterMinBadPoints === 0 && state.removeFilterCategories === 0) issues.push('Removal is on, but both removal thresholds are 0. Set at least one removal threshold above 0.');
+  return issues;
+}
+function metricText() {
+  const parts = state.flairParts;
+  const rep = state.previewTone === 'good' ? 61 : state.previewTone === 'bad' ? -23 : 6;
+  const warn = state.previewTone === 'good' ? 4 : state.previewTone === 'bad' ? 42 : 11;
+  const activity = 148;
+  const good = state.previewTone === 'good' ? 669 : 96;
+  const bad = state.previewTone === 'bad' ? 1000 : 221;
+  const items = [];
+  if (parts.includes('rep')) items.push(`${symbols.rep} ${rep}%`);
+  if (parts.includes('warn')) items.push(`${symbols.warn} ${warn}`);
+  if (parts.includes('activity')) items.push(`${symbols.activity} [${activity}]`);
+  if (parts.includes('good')) items.push(`+${good}`);
+  if (parts.includes('bad')) items.push(`-${bad}`);
+  return items.join(' ∣ ');
+}
+function streakIcon() {
+  if (state.enableFlairUpdates && state.enableHumanVerification && state.flairParts.includes('streak')) return `<img src="${vrfData}" alt="vrf">`;
+  if (!state.flairParts.includes('streak')) return '';
+  return state.previewTone === 'good' ? '💎26' : state.previewTone === 'bad' ? '🔥3' : '💛12';
+}
+function flairColor() {
+  const base = state.colorFlairByReputation ? (state.previewTone === 'good' ? '#1f6f3c' : state.previewTone === 'bad' ? '#8b2e2e' : '#69561d') : '#293241';
+  const text = '#f5f7fb';
+  return { background: base, color: text };
+}
+function flairPreviewText() {
+  const bits = [];
+  if (state.flairParts.includes('streak')) bits.push(streakIcon());
+  if (state.flairParts.includes('head') && state.preserveCustomFlairText) bits.push('Flair');
+  const right = metricText();
+  let text = bits.filter(Boolean).join(bits.length > 1 ? ' · ' : '');
+  if (right) text = text ? `${text} ∣ ${right}` : right;
+  return text || 'No visible flair fields selected';
+}
+function renderFlairPreview() {
+  const colors = flairColor();
+  return `
+    <div class="previewCard">
+      <div class="previewPost">
+        <div class="previewHeader">
+          <div class="avatar"></div>
+          <div class="previewMeta">
+            <span class="username">u/ExampleUser</span>
+            <span class="redditFlair" style="background:${colors.background}; color:${colors.color};">${flairPreviewText()}</span>
+          </div>
+        </div>
+        <div class="muted tiny">Preview tone: ${state.previewTone === 'good' ? 'strong reputation' : state.previewTone === 'bad' ? 'poor reputation' : 'mixed reputation'}. This shows the rounded Reddit-style flair pill. When verification is enabled, the preview shows the vrf version of the badge so you can see how verified users will look.</div>
+        <div class="pills">
+          ${['good','neutral','bad'].map(t => `<button type="button" data-tone="${t}" class="${state.previewTone === t ? 'active' : ''}">${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+function humanSummary() {
+  const lines = [];
+  const metrics = [];
+  if (state.flairParts.includes('streak')) metrics.push(state.enableHumanVerification ? 'streak badge that swaps to vrf after verification' : 'streak badge');
+  if (state.flairParts.includes('head')) metrics.push('kept flair text');
+  if (state.flairParts.includes('rep')) metrics.push('reputation percent');
+  if (state.flairParts.includes('warn')) metrics.push('warning count');
+  if (state.flairParts.includes('activity')) metrics.push('post + comment count');
+  if (state.flairParts.includes('good')) metrics.push('good points');
+  if (state.flairParts.includes('bad')) metrics.push('bad points');
+  lines.push(`What gets scored: the built-in reputation categories${state.customBadTerms.length ? ` plus ${state.customBadTerms.length} custom term${state.customBadTerms.length === 1 ? '' : 's'}` : ''}${state.enableExtremeNormalization ? ', with aggressive normalization turned on' : ''}.`);
+  if (state.enableReviewFilter) lines.push(`When review happens: an item is sent for moderator review when it reaches ${state.reviewFilterMinBadPoints > 0 ? `${state.reviewFilterMinBadPoints}+ negative points` : 'no bad-point trigger'}${state.reviewFilterMinBadPoints > 0 && state.reviewFilterCategories > 0 ? ' or ' : ''}${state.reviewFilterCategories > 0 ? `${state.reviewFilterCategories}+ matched categories` : ''}. This is OR logic, not AND.`);
+  else lines.push('When review happens: review routing is off.');
+  if (state.enableRemoveFilter) lines.push(`When removal happens: an item is filtered from public view when it reaches ${state.removeFilterMinBadPoints > 0 ? `${state.removeFilterMinBadPoints}+ negative points` : 'no bad-point trigger'}${state.removeFilterMinBadPoints > 0 && state.removeFilterCategories > 0 ? ' or ' : ''}${state.removeFilterCategories > 0 ? `${state.removeFilterCategories}+ matched categories` : ''}. This is OR logic, not AND.`);
+  else lines.push('When removal happens: public-view filtering is off.');
+  lines.push(`How flair looks: ${state.enableFlairUpdates ? `${state.style} style, ${state.colorFlairByReputation ? 'background color changes with reputation' : 'background color stays fixed'}, and it shows ${metrics.length ? metrics.join(', ') : 'no visible flair fields'}` : 'flair updates are disabled'}.`);
+  const ex = [];
+  if (state.enableReviewFilter) {
+    if (state.ignoreModerators) ex.push('moderators are skipped from review');
+    if (state.ignoreApprovedUsers) ex.push('approved users are skipped from review');
+  }
+  if (state.enableRemoveFilter) {
+    if (state.removeIgnoreModerators) ex.push('moderators are skipped from removal');
+    if (state.removeIgnoreApprovedUsers) ex.push('approved users are skipped from removal');
+  }
+  if (state.protectOpSelfReplies) ex.push(`OP self-replies cannot add negative reputation and can earn up to ${state.ownPostCommentGoodCap} good points`);
+  if (state.badPointCapLimit > 0) ex.push(`moderators are capped at ${state.badPointCapLimit} bad points per item`);
+  lines.push(`Who is exempt or protected: ${ex.length ? ex.join('; ') : 'no extra exemptions or caps are active'}.`);
+  lines.push(`Whether verification is active: ${state.enableHumanVerification ? `yes; the human test is on, the menu action is ${state.enableVerifyHumanMenu ? 'on' : 'off'}, reminders are ${state.enableHumanVerificationReminder ? `on every ${state.humanVerificationReminderInterval}` : 'off'}, post blocking is ${state.verificationRemovePostsUntilVerified ? 'on' : 'off'}, comment blocking is ${state.verificationRemoveCommentsUntilVerified ? 'on' : 'off'}${state.approveVerificationRemovedWhenVerified ? ', and verification-only removals are auto-approved after the user verifies' : ''}` : 'no'}.`);
+  return lines;
+}
+function buildExportConfig() {
+  const out = {
+    enableHighTrafficMode: state.enableHighTrafficMode,
+    customBadTerms: state.customBadTerms,
+    enableExtremeNormalization: state.enableExtremeNormalization,
+    updateReputationModNotes: state.updateReputationModNotes,
+    negativeScoreFade: state.negativeScoreFade,
+    streakMode: state.streakMode,
+    threshRegular: state.threshRegular,
+    threshPro: state.threshPro,
+    threshElite: state.threshElite,
+    protectOpSelfReplies: state.protectOpSelfReplies,
+    ownPostCommentGoodCap: state.protectOpSelfReplies ? state.ownPostCommentGoodCap : defaults.ownPostCommentGoodCap,
+    moderatorOnlyPerItemBadPointCap: state.badPointCapLimit,
+    enableFlairUpdates: state.enableFlairUpdates
+  };
+  if (state.enableFlairUpdates) {
+    out.preserveCustomFlairText = state.preserveCustomFlairText;
+    out.style = state.style;
+    out.showPostCommentCount = state.showPostCommentCount;
+    out.colorFlairByReputation = state.colorFlairByReputation;
+    out.flairParts = state.flairParts.slice();
+  }
+  out.enableReviewFilter = state.enableReviewFilter;
+  if (state.enableReviewFilter) {
+    out.reviewFilterMinBadPoints = state.reviewFilterMinBadPoints;
+    out.reviewFilterCategories = state.reviewFilterCategories;
+    out.ignoreModerators = state.ignoreModerators;
+    out.ignoreApprovedUsers = state.ignoreApprovedUsers;
+  }
+  out.enableRemoveFilter = state.enableRemoveFilter;
+  if (state.enableRemoveFilter) {
+    out.removeFilterMinBadPoints = state.removeFilterMinBadPoints;
+    out.removeFilterCategories = state.removeFilterCategories;
+    out.removeIgnoreModerators = state.removeIgnoreModerators;
+    out.removeIgnoreApprovedUsers = state.removeIgnoreApprovedUsers;
+  }
+  out.enableHumanVerification = state.enableHumanVerification;
+  if (state.enableHumanVerification) {
+    out.useHumanVerified = true;
+    out.enableVerifyHumanMenu = state.enableVerifyHumanMenu;
+    out.enableHumanVerificationReminder = state.enableHumanVerificationReminder;
+    if (state.enableHumanVerificationReminder) out.humanVerificationReminderInterval = state.humanVerificationReminderInterval;
+    out.verificationRemovePostsUntilVerified = state.verificationRemovePostsUntilVerified;
+    out.verificationRemoveCommentsUntilVerified = state.verificationRemoveCommentsUntilVerified;
+    if (state.approveVerificationRemovedWhenVerified && (state.verificationRemovePostsUntilVerified || state.verificationRemoveCommentsUntilVerified)) out.approveVerificationRemovedWhenVerified = true;
+  }
+  return out;
+}
+function buildLineExport() {
+  const out = buildExportConfig();
+  const lines = [];
+  for (const [key, value] of Object.entries(out)) {
+    if (Array.isArray(value)) lines.push(`${key}=${JSON.stringify(value)}`);
+    else if (typeof value === 'string') lines.push(`${key}=${value}`);
+    else lines.push(`${key}=${JSON.stringify(value)}`);
+  }
+  return lines.join('\n');
+}
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    copiedStatus = 'Copied to clipboard.';
+    render();
+    setTimeout(() => { copiedStatus = ''; render(); }, 1500);
+  }).catch(() => {
+    copiedStatus = 'Copy failed in this browser.';
+    render();
+    setTimeout(() => { copiedStatus = ''; render(); }, 2000);
+  });
+}
+function fieldToggle(id, label, help, checked, disabled=false, extra='') {
+  return `<div class="field ${disabled ? 'disabledBlock' : ''}"><label class="inline"><input data-bind="${id}" type="checkbox" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''}> ${label}</label><small>${help}</small>${extra}</div>`;
+}
+function sliderField(id, label, value, min, max, help, disabled=false) {
+  return `<div class="field ${disabled ? 'disabledBlock' : ''}"><label class="title">${label}</label><small>${help}</small><div class="sliderRow"><input data-bind="${id}" type="range" min="${min}" max="${max}" step="1" value="${value}" ${disabled ? 'disabled' : ''}><div class="valueBox">${value}</div></div></div>`;
+}
+function importSection() {
+  return `
+    <section class="card">
+      <h2 class="sectionTitle">Import or start fresh</h2>
+      <p class="sectionLead">Paste your current <b>rfConfig</b> here to preload the builder, or leave it empty to start from the recommended setup shown below.</p>
+      <div class="grid2">
+        <div class="field">
+          <label class="title">Paste current JSON, array, or key=value lines</label>
+          <textarea id="importText" class="codeBlock" placeholder='{"style":"new","enableReviewFilter":true}'></textarea>
+          <div class="pills">
+            <button type="button" id="applyImport">Use pasted config</button>
+            <button type="button" id="clearImport" class="ghostBtn">Clear pasted text</button>
+          </div>
+          ${importStatus ? `<div class="${importStatus.startsWith('Loaded') || importStatus.startsWith('Config loaded') ? 'okBox' : 'warnBox'}">${importStatus}</div>` : ''}
+        </div>
+        <div class="stack">
+          <div class="callout"><b>The recommended config is already loaded.</b> It turns on high traffic mode, reputation mod-note updates, automatic flair, preserved flair text, reputation-based flair color, post + comment count, OP self-reply protection, review, removal, and human verification with reminder mode.</div>
+          <div class="subCard stack">
+            <div><b>Quick defaults</b></div>
+            <ul class="summaryList compactList">
+              <li>Review starts at 4+ negative points or 3+ matched categories.</li>
+              <li>Removal starts at 8+ negative points or 5+ matched categories.</li>
+              <li>Negative scores fade slowly over time.</li>
+              <li>Streaks do not expire.</li>
+            </ul>
+          </div>
+          <div class="field">
+            <label class="title">Layout</label>
+            <div class="segment">
+              <button type="button" data-layout="wizard" class="${state.layoutMode === 'wizard' ? 'active' : ''}">Wizard</button>
+              <button type="button" data-layout="single" class="${state.layoutMode === 'single' ? 'active' : ''}">Single page</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>`;
+}
+function flairSection() {
+  const parts = state.flairParts;
+  const partLabels = [
+    ['streak','Show streak badge'],
+    ['head','Show kept flair text'],
+    ['rep','Show reputation %'],
+    ['warn','Show warning count'],
+    ['activity','Show post + comment count'],
+    ['good','Show +good points'],
+    ['bad','Show -bad points']
+  ];
+  return `
+    <section class="card">
+      <h2 class="sectionTitle">Flair</h2>
+      <p class="sectionLead">Decide whether the app should update flair, how the flair pill should look on Reddit, and which stats should stay visible at a glance.</p>
+      <div class="grid2">
+        <div class="stack">
+          ${fieldToggle('enableFlairUpdates', 'Update flair automatically', 'Turn this off if you only want scoring and moderation.', state.enableFlairUpdates)}
+          <div class="subCard stack ${state.enableFlairUpdates ? '' : 'disabledBlock'}">
+            ${fieldToggle('preserveCustomFlairText', 'Preserve custom flair text', 'Keep the user’s existing flair text and only rebuild the app-managed part.', state.preserveCustomFlairText, !state.enableFlairUpdates)}
+            <div class="field">
+              <label class="title">Style</label>
+              <div class="segment">
+                <button type="button" data-style="old" class="${state.style === 'old' ? 'active' : ''}" ${state.enableFlairUpdates ? '' : 'disabled'}>Old</button>
+                <button type="button" data-style="new" class="${state.style === 'new' ? 'active' : ''}" ${state.enableFlairUpdates ? '' : 'disabled'}>New</button>
+              </div>
+              <small><b>Old</b> focuses on +good and -bad points. <b>New</b> focuses on reputation, warning count, and activity.</small>
+            </div>
+            ${fieldToggle('showPostCommentCount', 'Show post + comment count', 'Show the combined post and comment count in the flair.', state.showPostCommentCount, !state.enableFlairUpdates)}
+            ${fieldToggle('colorFlairByReputation', 'Change flair color based on reputation', 'Use greener flair for stronger reputation and redder flair for weaker reputation.', state.colorFlairByReputation, !state.enableFlairUpdates)}
+            <div class="field">
+              <label class="title">What to include in the flair</label>
+              <div class="chips">${partLabels.map(([key, label]) => `<label class="chip"><input data-part="${key}" type="checkbox" ${parts.includes(key) ? 'checked' : ''} ${state.enableFlairUpdates ? '' : 'disabled'}> ${label}</label>`).join('')}</div>
+              <small>Use these checkboxes to decide what appears inside the flair pill. Verification setup is handled on the Verification screen.</small>
+            </div>
+          </div>
+        </div>
+        <div class="stack">
+          ${renderFlairPreview()}
+          <div class="subCard grid3 ${state.enableFlairUpdates ? '' : 'disabledBlock'}">
+            <div class="field"><label class="title">Regular tier starts at</label><input data-bind="threshRegular" type="number" min="0" max="999" value="${state.threshRegular}" ${state.enableFlairUpdates ? '' : 'disabled'}><small>Default 10 days.</small></div>
+            <div class="field"><label class="title">Pro tier starts at</label><input data-bind="threshPro" type="number" min="0" max="999" value="${state.threshPro}" ${state.enableFlairUpdates ? '' : 'disabled'}><small>Default 20 days.</small></div>
+            <div class="field"><label class="title">Elite tier starts at</label><input data-bind="threshElite" type="number" min="0" max="999" value="${state.threshElite}" ${state.enableFlairUpdates ? '' : 'disabled'}><small>Default 30 days.</small></div>
+          </div>
+        </div>
+      </div>
+    </section>`;
+}
+function detectionSection() {
+  return `
+    <section class="card">
+      <h2 class="sectionTitle">Detection strength</h2>
+      <p class="sectionLead">Choose what the app should match and how aggressive it should be when users try to hide wording.</p>
+      <div class="grid2">
+        <div class="field">
+          <label class="title">Custom bad terms</label>
+          <textarea id="customBadTerms" placeholder="gaslighter, low effort, case closed">${state.customBadTerms.join('\n')}</textarea>
+          <small>Comma, pipe, or line-separated.</small>
+        </div>
+        <div class="stack">
+          ${fieldToggle('enableExtremeNormalization', 'Extreme normalization matching', 'Catch heavier obfuscation, leetspeak, spacing tricks, and lookalike characters. This can raise false positives in some communities.', state.enableExtremeNormalization)}
+          ${fieldToggle('enableHighTrafficMode', 'High traffic mode', 'Reduce how often flair is rewritten so busy communities do less write churn and hit fewer rate limits.', state.enableHighTrafficMode)}
+          ${fieldToggle('updateReputationModNotes', 'Update reputation mod notes', 'Keep one RFstats mod note per user and refresh it when their score changes.', state.updateReputationModNotes)}
+        </div>
+      </div>
+    </section>`;
+}
+function reviewSection() {
+  return `
+    <section class="card">
+      <h2 class="sectionTitle">Review</h2>
+      <p class="sectionLead">Choose when a post or comment should be sent for moderator review. The thresholds below are minimums: once an item reaches the selected point value <b>or</b> the selected category count, it is sent for review. It does not need to hit both.</p>
+      <div class="stack">
+        ${fieldToggle('enableReviewFilter', 'Send matched items to moderator review', 'Send matched items to the mod queue for review.', state.enableReviewFilter)}
+        <div class="subCard stack ${state.enableReviewFilter ? '' : 'disabledBlock'}">
+          ${sliderField('reviewFilterMinBadPoints', 'Comment or post negative points', state.reviewFilterMinBadPoints, 0, 10, '0 turns this trigger off. Otherwise, review starts at this number or higher.', !state.enableReviewFilter)}
+          ${sliderField('reviewFilterCategories', 'Number of categories', state.reviewFilterCategories, 0, 6, '0 turns this trigger off. Otherwise, review starts at this number of matched categories or higher. This works with OR logic, not AND.', !state.enableReviewFilter)}
+          <div class="checks">
+            <label><input data-bind="ignoreModerators" type="checkbox" ${state.ignoreModerators ? 'checked' : ''} ${state.enableReviewFilter ? '' : 'disabled'}> Ignore moderators from review</label>
+            <label><input data-bind="ignoreApprovedUsers" type="checkbox" ${state.ignoreApprovedUsers ? 'checked' : ''} ${state.enableReviewFilter ? '' : 'disabled'}> Ignore approved users from review</label>
+          </div>
+        </div>
+      </div>
+    </section>`;
+}
+function removalSection() {
+  return `
+    <section class="card">
+      <h2 class="sectionTitle">Removal</h2>
+      <p class="sectionLead">Choose when a post or comment should be removed from public view. The thresholds below are minimums: once an item reaches the selected point value <b>or</b> the selected category count, it is removed. It does not need to hit both. When review is also on, any non-zero removal threshold stays at least 1 step above the matching review threshold.</p>
+      <div class="stack">
+        ${fieldToggle('enableRemoveFilter', 'Filter matched items from public view', 'Remove matched items from public view.', state.enableRemoveFilter)}
+        <div class="subCard stack ${state.enableRemoveFilter ? '' : 'disabledBlock'}">
+          ${sliderField('removeFilterMinBadPoints', 'Comment or post negative points', state.removeFilterMinBadPoints, 0, 10, '0 turns this trigger off. Otherwise, removal starts at this number or higher. If review is on, this stays at least 1 point above the review setting.', !state.enableRemoveFilter)}
+          ${sliderField('removeFilterCategories', 'Number of categories', state.removeFilterCategories, 0, 6, '0 turns this trigger off. Otherwise, removal starts at this number of matched categories or higher. If review is on, this stays at least 1 above the review category setting. This works with OR logic, not AND.', !state.enableRemoveFilter)}
+          <div class="checks">
+            <label><input data-bind="removeIgnoreModerators" type="checkbox" ${state.removeIgnoreModerators ? 'checked' : ''} ${state.enableRemoveFilter ? '' : 'disabled'}> Ignore moderators from removal</label>
+            <label><input data-bind="removeIgnoreApprovedUsers" type="checkbox" ${state.removeIgnoreApprovedUsers ? 'checked' : ''} ${state.enableRemoveFilter ? '' : 'disabled'}> Ignore approved users from removal</label>
+          </div>
+        </div>
+      </div>
+    </section>`;
+}
+function protectionsSection() {
+  return `
+    <section class="card">
+      <h2 class="sectionTitle">Protections and caps</h2>
+      <p class="sectionLead">Use these safeguards to protect edge cases, reduce false positives, and limit how much damage one item can do.</p>
+      <div class="stack">
+        ${fieldToggle('protectOpSelfReplies', 'Protect OP self-replies on their own posts', 'When this is on, comments by a post author on their own post do not add negative reputation and can earn a limited amount of good points instead.', state.protectOpSelfReplies)}
+        <div class="subCard stack ${state.protectOpSelfReplies ? '' : 'disabledBlock'}">
+          ${sliderField('ownPostCommentGoodCap', 'Max good points per OP self-reply', state.ownPostCommentGoodCap, 0, 10, 'Recommended limit: 5.', !state.protectOpSelfReplies)}
+        </div>
+        <div class="subCard stack">
+          <div class="field">
+            <label class="title">Moderator-only per-item bad point cap</label>
+            <small>0 turns this off. Otherwise this is the maximum bad points a moderator can receive from one item.</small>
+            <div class="sliderRow"><input data-bind="badPointCapLimit" type="range" min="0" max="20" step="1" value="${state.badPointCapLimit}"><div class="valueBox">${state.badPointCapLimit}</div></div>
+          </div>
+        </div>
+      </div>
+    </section>`;
+}
+function behaviorSection() {
+  return `
+    <section class="card">
+      <h2 class="sectionTitle">Reputation behavior</h2>
+      <p class="sectionLead">Decide whether negative reputation should fade over time and how long streaks should last.</p>
+      <div class="grid2">
+        <div class="field">
+          <label class="title">Should negative scores fade over time?</label>
+          <div class="segment">
+            ${['off','low','medium','high'].map(v => `<button type="button" data-decay="${v}" class="${state.negativeScoreFade === v ? 'active' : ''}">${v[0].toUpperCase() + v.slice(1)}</button>`).join('')}
+          </div>
+        </div>
+        <div class="field">
+          <label class="title">Streak expiry</label>
+          <div class="segment">
+            <button type="button" data-streak="noexpire" class="${state.streakMode === 'noexpire' ? 'active' : ''}">No expiry</button>
+            <button type="button" data-streak="hourly24" class="${state.streakMode === 'hourly24' ? 'active' : ''}">48hrs without posting</button>
+            <button type="button" data-streak="hourly48" class="${state.streakMode === 'hourly48' ? 'active' : ''}">72hrs without posting</button>
+          </div>
+          <small>Changing the visible flair does not stop streak tracking on its own.</small>
+        </div>
+      </div>
+    </section>`;
+}
+function verificationSection() {
+  const canRestoreVerificationRemoved = state.enableHumanVerification && (state.verificationRemovePostsUntilVerified || state.verificationRemoveCommentsUntilVerified);
+  return `
+    <section class="card">
+      <h2 class="sectionTitle">Verification</h2>
+      <p class="sectionLead">Use this if you want the app to run a human-vs-bot verification flow before people participate. Verified users get the vrf badge in flair after they pass the test.</p>
+      <div class="grid2">
+        <div class="stack">
+          ${fieldToggle('enableHumanVerification', 'Enable human account verification', 'Turn on the verification system. If you switch on any verification-only option, this turns on automatically.', state.enableHumanVerification)}
+          <div class="subCard stack ${state.enableHumanVerification ? '' : 'disabledBlock'}">
+            ${fieldToggle('enableVerifyHumanMenu', 'Show a “Verify Human Account” action on posts and comments', 'Lets users open the verification flow from an item menu.', state.enableVerifyHumanMenu, !state.enableHumanVerification)}
+            ${fieldToggle('enableHumanVerificationReminder', 'Remind unverified users when they try to post or comment', 'Use this when you want a softer reminder instead of blocking content right away.', state.enableHumanVerificationReminder, !state.enableHumanVerification || state.verificationRemovePostsUntilVerified || state.verificationRemoveCommentsUntilVerified)}
+            <div class="field ${state.enableHumanVerification && state.enableHumanVerificationReminder ? '' : 'disabledBlock'}"><label class="title">Reminder frequency</label><select data-bind="humanVerificationReminderInterval" ${state.enableHumanVerification && state.enableHumanVerificationReminder ? '' : 'disabled'}><option value="1h" ${state.humanVerificationReminderInterval === '1h' ? 'selected' : ''}>Once per hour</option><option value="12h" ${state.humanVerificationReminderInterval === '12h' ? 'selected' : ''}>Once every 12 hours</option><option value="1d" ${state.humanVerificationReminderInterval === '1d' ? 'selected' : ''}>Once per day</option><option value="1w" ${state.humanVerificationReminderInterval === '1w' ? 'selected' : ''}>Once per week</option></select><small>Users are reminded again only after the cooldown expires and they try to participate again.</small></div>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="subCard stack ${state.enableHumanVerification ? '' : 'disabledBlock'}">
+            ${fieldToggle('verificationRemovePostsUntilVerified', 'Remove new posts until the user verifies', 'Use a mod-team removal message that explains they must verify first.', state.verificationRemovePostsUntilVerified, !state.enableHumanVerification)}
+            ${fieldToggle('verificationRemoveCommentsUntilVerified', 'Remove new comments until the user verifies', 'Use a mod-team removal message that explains they must verify first.', state.verificationRemoveCommentsUntilVerified, !state.enableHumanVerification)}
+            ${fieldToggle('approveVerificationRemovedWhenVerified', 'When they later verify, automatically approve content removed only for verification', 'Only applies to posts or comments that were removed solely because the user had not verified yet.', state.approveVerificationRemovedWhenVerified, !canRestoreVerificationRemoved)}
+          </div>
+          <div class="callout"><b>Next step:</b> after this screen, the builder will walk you through turning on subreddit emoji and uploading <b>vrf.png</b>.</div>
+        </div>
+      </div>
+    </section>`;
+}
+
+function emojiSetupSection() {
+  const url = emojiSettingsUrl();
+  return `
+    <section class="card">
+      <h2 class="sectionTitle">Install vrf emoji</h2>
+      <p class="sectionLead">Verification uses a custom subreddit emoji named <b>vrf</b>. Enter your subreddit name below, press <b>Enter</b>, and the Reddit emoji settings page will open.</p>
+      <div class="grid2 installTop">
+        <div class="stack">
+          <div class="field">
+            <label class="title">Subreddit name</label>
+            <input id="subredditName" data-bind="subredditName" type="text" placeholder="example_subreddit" value="${state.subredditName || ''}" autocapitalize="off" autocomplete="off" spellcheck="false">
+            <small>Enter only the subreddit name, not the full URL.</small>
+          </div>
+          <div class="assetRow">
+            <button type="button" id="openEmojiSettings" class="primaryBtn" ${url ? '' : 'disabled'}>Open Reddit emoji settings</button>
+            <a class="inlineBtn" href="${vrfData}" download="vrf.png">Download vrf.png</a>
+          </div>
+          ${url ? `<div class="callout"><b>Emoji settings URL:</b> <a href="${url}" target="_blank" rel="noopener">${url}</a></div>` : '<div class="callout"><b>Tip:</b> Once you enter your subreddit name, this page will build the direct Reddit emoji-settings link for you.</div>'}
+          <div class="subCard stack">
+            <div><b>Recommended emoji settings</b></div>
+            <ul class="summaryList compactList">
+              <li>Turn <b>Emoji</b> on for the subreddit.</li>
+              <li>Upload <b>vrf.png</b>.</li>
+              <li>Name the emoji <b>vrf</b>.</li>
+              <li>Turn <b>User flair</b> on.</li>
+              <li>Leave <b>Post flair</b> off.</li>
+              <li>Leave <b>Mod only</b> off.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="assetPreview largeAsset"><img src="${vrfData}" alt="vrf icon"><div><b>vrf.png</b><div class="muted">Use this exact badge image for verified users.</div></div></div>
+        </div>
+      </div>
+      <div class="installGrid">
+        <div class="subCard stack">
+          <div><b>Step 1 — enable custom emoji</b></div>
+          <img class="guideShot" src="${enableEmojiData}" alt="Enable emoji screenshot">
+          <small>Turn on the subreddit emoji toggle first.</small>
+        </div>
+        <div class="subCard stack">
+          <div><b>Step 2 — upload vrf.png and keep only User flair on</b></div>
+          <img class="guideShot" src="${vrfSettingsData}" alt="VRF emoji settings screenshot">
+          <small>Name it <b>vrf</b>, keep <b>User flair</b> on, and leave <b>Post flair</b> and <b>Mod only</b> off.</small>
+        </div>
+      </div>
+    </section>`;
+}
+
+function summarySection() {
+  const issues = getConflicts();
+  const jsonOut = JSON.stringify(buildExportConfig(), null, 2);
+  const lineOut = buildLineExport();
+  return `
+    <section class="card">
+      <h2 class="sectionTitle">Final summary</h2>
+      <p class="sectionLead">This is the plain-language summary and the final config blob. Export stays blocked until conflicts are fixed.</p>
+      ${issues.length ? `<div class="warnBox"><b>Fix these before export:</b><ul class="summaryList">${issues.map(v => `<li>${v}</li>`).join('')}</ul></div>` : '<div class="okBox">No conflicts found. Export is ready.</div>'}
+      <div class="grid2">
+        <div class="stack">
+          <div class="subCard">
+            <h3 style="margin-top:0;">Plain English</h3>
+            <ul class="summaryList">${humanSummary().map(v => `<li>${v}</li>`).join('')}</ul>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="field">
+            <label class="title">JSON output</label>
+            <textarea readonly class="codeBlock">${jsonOut}</textarea>
+            <div class="pills"><button type="button" ${issues.length ? 'disabled' : ''} id="copyJson">Copy JSON</button></div>
+          </div>
+          <div class="field">
+            <label class="title">key=value output</label>
+            <textarea readonly class="codeBlock">${lineOut}</textarea>
+            <div class="pills"><button type="button" ${issues.length ? 'disabled' : ''} id="copyLines">Copy key=value</button></div>
+          </div>
+          ${copiedStatus ? `<div class="okBox">${copiedStatus}</div>` : ''}
+        </div>
+      </div>
+    </section>`;
+}
+function renderWizard() {
+  const steps = getSteps();
+  const current = steps[stepIndex] || steps[0];
+  let section = '';
+  if (current.id === 'import') section = importSection();
+  if (current.id === 'flair') section = flairSection();
+  if (current.id === 'detection') section = detectionSection();
+  if (current.id === 'review') section = reviewSection();
+  if (current.id === 'removal') section = removalSection();
+  if (current.id === 'protections') section = protectionsSection();
+  if (current.id === 'behavior') section = behaviorSection();
+  if (current.id === 'verification') section = verificationSection();
+  if (current.id === 'emojiSetup') section = emojiSetupSection();
+  if (current.id === 'summary') section = summarySection();
+  return `
+    <div class="modeWrap">
+      <div class="segment">
+        <button type="button" data-layout="wizard" class="active">Wizard</button>
+        <button type="button" data-layout="single">Single page</button>
+      </div>
+      <div class="badge">Step ${stepIndex + 1} of ${steps.length}</div>
+    </div>
+    <div class="stepDots">${steps.map((step, i) => `<button type="button" class="stepDot ${i < stepIndex ? 'done' : ''} ${i === stepIndex ? 'active' : ''}" data-step="${i}">${i + 1}</button>`).join('')}</div>
+    ${section}
+    <div class="nav">
+      <div class="navLeft">
+        <button type="button" class="ghostBtn" id="resetAll">Reset</button>
+      </div>
+      <div class="navRight">
+        <button type="button" ${stepIndex === 0 ? 'disabled' : ''} id="prevStep">Back</button>
+        <button type="button" class="primaryBtn" ${stepIndex === steps.length - 1 ? 'disabled' : ''} id="nextStep">Next</button>
+      </div>
+    </div>`;
+}
+function renderSinglePage() {
+  return `
+    <div class="modeWrap">
+      <div class="segment">
+        <button type="button" data-layout="wizard">Wizard</button>
+        <button type="button" data-layout="single" class="active">Single page</button>
+      </div>
+      <div class="badge">All screens shown together</div>
+    </div>
+    <div class="stack">
+      ${importSection()}
+      ${flairSection()}
+      ${detectionSection()}
+      ${reviewSection()}
+      ${removalSection()}
+      ${protectionsSection()}
+      ${behaviorSection()}
+      ${verificationSection()}
+      ${state.enableHumanVerification ? emojiSetupSection() : ''}
+      ${summarySection()}
+      <div class="nav"><div class="navLeft"><button type="button" class="ghostBtn" id="resetAll">Reset</button></div><div class="navRight"></div></div>
+    </div>`;
+}
+function render() {
+  enforceState();
+  const steps = getSteps();
+  if (stepIndex > steps.length - 1) stepIndex = steps.length - 1;
+  app.innerHTML = state.layoutMode === 'single' ? renderSinglePage() : renderWizard();
+  const importEl = document.getElementById('importText');
+  if (importEl) importEl.value = importText;
+  bindEvents();
+}
+function bindEvents() {
+  document.querySelectorAll('[data-layout]').forEach(btn => btn.addEventListener('click', () => { state.layoutMode = btn.dataset.layout; render(); }));
+  document.querySelectorAll('[data-step]').forEach(btn => btn.addEventListener('click', () => { stepIndex = Number(btn.dataset.step); render(); }));
+  const prev = document.getElementById('prevStep'); if (prev) prev.addEventListener('click', () => { stepIndex = Math.max(0, stepIndex - 1); render(); });
+  const next = document.getElementById('nextStep'); if (next) next.addEventListener('click', () => { stepIndex = Math.min(getSteps().length - 1, stepIndex + 1); render(); });
+  const reset = document.getElementById('resetAll'); if (reset) reset.addEventListener('click', () => { state = JSON.parse(JSON.stringify(defaults)); stepIndex = 0; importText = ''; importStatus = ''; copiedStatus = ''; flairPartsTouched = false; render(); });
+  const applyImport = document.getElementById('applyImport');
+  if (applyImport) applyImport.addEventListener('click', () => {
+    const area = document.getElementById('importText');
+    importText = area ? area.value : importText;
+    try {
+      state = parseConfigBlob(importText);
+      state.layoutMode = state.layoutMode || defaults.layoutMode;
+      state.previewTone = defaults.previewTone;
+      importStatus = 'Config loaded.';
+      flairPartsTouched = false;
+      enforceState();
+      render();
+    } catch {
+      importStatus = 'Could not parse pasted config.';
+      render();
+    }
+  });
+  const clearImport = document.getElementById('clearImport'); if (clearImport) clearImport.addEventListener('click', () => { importText = ''; importStatus = ''; render(); });
+  const openEmojiSettings = document.getElementById('openEmojiSettings'); if (openEmojiSettings) openEmojiSettings.addEventListener('click', () => { const url = emojiSettingsUrl(); if (url) window.open(url, '_blank', 'noopener'); });
+  const subredditName = document.getElementById('subredditName'); if (subredditName) subredditName.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); state.subredditName = cleanSubredditName(subredditName.value); const url = emojiSettingsUrl(); render(); if (url) window.open(url, '_blank', 'noopener'); } });
+  const customTerms = document.getElementById('customBadTerms'); if (customTerms) customTerms.addEventListener('input', e => { state.customBadTerms = toListValue(e.target.value, 50); render(); });
+  document.querySelectorAll('[data-tone]').forEach(btn => btn.addEventListener('click', () => setState({ previewTone: btn.dataset.tone })));
+  document.querySelectorAll('[data-style]').forEach(btn => btn.addEventListener('click', () => { if (!state.enableFlairUpdates) return; state.style = btn.dataset.style; maybeResetFlairDefaults(true); render(); }));
+  document.querySelectorAll('[data-decay]').forEach(btn => btn.addEventListener('click', () => setState({ negativeScoreFade: btn.dataset.decay })));
+  document.querySelectorAll('[data-streak]').forEach(btn => btn.addEventListener('click', () => setState({ streakMode: btn.dataset.streak })));
+  document.querySelectorAll('[data-part]').forEach(box => box.addEventListener('change', e => setFlairPart(box.dataset.part, e.target.checked)));
+  document.querySelectorAll('[data-bind]').forEach(input => {
+    input.addEventListener('input', e => {
+      const key = input.dataset.bind;
+      let value;
+      if (input.type === 'checkbox') value = e.target.checked;
+      else if (input.type === 'range' || input.type === 'number') value = Number(e.target.value);
+      else value = e.target.value;
+      if (key === 'showPostCommentCount') {
+        state.showPostCommentCount = value;
+        maybeResetFlairDefaults(true);
+      } else {
+        state[key] = value;
+      }
+      if (key === 'enableHumanVerification' && !value) {
+        state.enableVerifyHumanMenu = false;
+        state.enableHumanVerificationReminder = false;
+        state.verificationRemovePostsUntilVerified = false;
+        state.verificationRemoveCommentsUntilVerified = false;
+        state.approveVerificationRemovedWhenVerified = false;
+      }
+      if (key === 'verificationRemovePostsUntilVerified' && value) state.enableHumanVerificationReminder = false;
+      if (key === 'verificationRemoveCommentsUntilVerified' && value) state.enableHumanVerificationReminder = false;
+      if ((key === 'verificationRemovePostsUntilVerified' || key === 'verificationRemoveCommentsUntilVerified') && !state.verificationRemovePostsUntilVerified && !state.verificationRemoveCommentsUntilVerified) state.approveVerificationRemovedWhenVerified = false;
+      if (key === 'enableReviewFilter' && !value) {
+        state.ignoreModerators = false;
+        state.ignoreApprovedUsers = false;
+      }
+      if (key === 'enableRemoveFilter' && !value) {
+        state.removeIgnoreModerators = false;
+        state.removeIgnoreApprovedUsers = false;
+      }
+      if (key === 'protectOpSelfReplies' && !value) state.ownPostCommentGoodCap = defaults.ownPostCommentGoodCap;
+      enforceState();
+      render();
+    });
+  });
+  const copyJson = document.getElementById('copyJson'); if (copyJson) copyJson.addEventListener('click', () => copyText(JSON.stringify(buildExportConfig(), null, 2)));
+  const copyLines = document.getElementById('copyLines'); if (copyLines) copyLines.addEventListener('click', () => copyText(buildLineExport()));
+}
+render();
+</script>
+</body>
+</html>
