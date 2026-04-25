@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reputation Flair Config Wizard</title>
+  <title>Reputation Flair Config Wizard v0.5.19</title>
   
   <!-- Load Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -76,13 +76,15 @@
       removeIgnoreApprovedUsers: false,
       enableHumanVerification: true,
       enableVerifyHumanMenu: true,
-      enableHumanVerificationReminder: true,
-      humanVerificationReminderInterval: '1d',
+      enableHumanVerificationReminder: false,
+      humanVerificationReminderInterval: '7d',
       verificationRemovePostsUntilVerified: false,
       verificationRemoveCommentsUntilVerified: false,
       approveVerificationRemovedWhenVerified: false,
-      approveVerificationRemovedPostLimit: 3,
+      approveVerificationRemovedPostLimit: 5,
       approveVerificationRemovedCommentLimit: 10,
+      enableAutoPostRfCheckComments: true,
+      verificationCommentDeleteAfterMinutes: 1440,
     };
 
     // --- Helper Functions ---
@@ -411,7 +413,7 @@
                   <div className="pl-6 border-l-2 border-blue-500/30 ml-4 animate-in fade-in slide-in-from-top-2">
                     <Slider 
                       label="Max Good Points per OP Reply" 
-                      min={1} max={5} value={config.ownPostCommentGoodCap} 
+                      min={1} max={3} value={config.ownPostCommentGoodCap} 
                       onChange={(v) => update('ownPostCommentGoodCap', v)} 
                     />
                   </div>
@@ -419,12 +421,13 @@
 
                 <div className="p-5 rounded-xl border border-slate-700 bg-slate-800/30">
                   <h4 className="font-semibold text-slate-200 mb-2">Custom Bad Terms</h4>
-                  <p className="text-sm text-slate-400 mb-3">Add any extra terms specific to your subreddit that should trigger bad reputation. One term per line.</p>
-                  <textarea
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:border-blue-500 focus:outline-none min-h-[100px]"
-                    value={config.customBadTerms.join('\n')}
-                    onChange={(e) => update('customBadTerms', e.target.value.split('\n').map(s => s.trim()).filter(Boolean))}
-                    placeholder="gaslighter&#10;case closed&#10;low effort"
+                  <p className="text-sm text-slate-400 mb-3">Add extra subreddit-specific terms. Comma or pipe separated. Limit: 50 terms / 500 characters.</p>
+                  <input
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:border-blue-500 focus:outline-none"
+                    value={config.customBadTerms.join(', ')}
+                    maxLength="500"
+                    onChange={(e) => update('customBadTerms', e.target.value.split(/[,|]/).map(s => s.trim()).filter(Boolean).slice(0, 50))}
+                    placeholder="gaslighter, case closed, low effort"
                   />
                 </div>
 
@@ -453,16 +456,9 @@
                       <Slider label="Point Threshold" description="Trigger review if an item earns this many bad points. 0 turns this off." min={0} max={16} value={config.reviewFilterMinBadPoints} onChange={(v) => update('reviewFilterMinBadPoints', v)} />
                       <Slider label="Category Threshold" description="Trigger review if an item hits this many different toxicity categories. 0 turns this off." min={0} max={6} value={config.reviewFilterCategories} onChange={(v) => update('reviewFilterCategories', v)} />
                       
-                      <div className="flex flex-col gap-3 pt-2">
-                        <label className="flex items-center gap-3 text-sm text-slate-300 cursor-pointer hover:text-white transition-colors">
-                          <input type="checkbox" checked={config.ignoreModerators} onChange={e => update('ignoreModerators', e.target.checked)} className="w-4 h-4 rounded border-slate-600 bg-slate-900 accent-blue-500" />
-                          Ignore moderators from review
-                        </label>
-                        <label className="flex items-center gap-3 text-sm text-slate-300 cursor-pointer hover:text-white transition-colors">
-                          <input type="checkbox" checked={config.ignoreApprovedUsers} onChange={e => update('ignoreApprovedUsers', e.target.checked)} className="w-4 h-4 rounded border-slate-600 bg-slate-900 accent-blue-500" />
-                          Ignore approved users from review
-                        </label>
-                      </div>
+                      <Toggle label="Ignore moderators from review" description="Skip moderators when routing items to the mod queue." checked={config.ignoreModerators} onChange={(v) => update('ignoreModerators', v)} />
+                      <Toggle label="Ignore approved users from review" description="Skip approved users when routing items to the mod queue." checked={config.ignoreApprovedUsers} onChange={(v) => update('ignoreApprovedUsers', v)} />
+                      <p className="text-xs text-slate-500">You can choose to have this app ignore moderators and approved users on the admin panel.</p>
                     </div>
                   )}
                 </div>
@@ -493,16 +489,9 @@
                         }} 
                       />
 
-                      <div className="flex flex-col gap-3 pt-2">
-                        <label className="flex items-center gap-3 text-sm text-slate-300 cursor-pointer hover:text-white transition-colors">
-                          <input type="checkbox" checked={config.removeIgnoreModerators} onChange={e => update('removeIgnoreModerators', e.target.checked)} className="w-4 h-4 rounded border-slate-600 bg-slate-900 accent-blue-500" />
-                          Ignore moderators from removal
-                        </label>
-                        <label className="flex items-center gap-3 text-sm text-slate-300 cursor-pointer hover:text-white transition-colors">
-                          <input type="checkbox" checked={config.removeIgnoreApprovedUsers} onChange={e => update('removeIgnoreApprovedUsers', e.target.checked)} className="w-4 h-4 rounded border-slate-600 bg-slate-900 accent-blue-500" />
-                          Ignore approved users from removal
-                        </label>
-                      </div>
+                      <Toggle label="Ignore moderators from removal" description="Skip moderators when applying public-view removals." checked={config.removeIgnoreModerators} onChange={(v) => update('removeIgnoreModerators', v)} />
+                      <Toggle label="Ignore approved users from removal" description="Skip approved users when applying public-view removals." checked={config.removeIgnoreApprovedUsers} onChange={(v) => update('removeIgnoreApprovedUsers', v)} />
+                      <p className="text-xs text-slate-500">You can choose to have this app ignore moderators and approved users on the admin panel.</p>
                     </div>
                   )}
                 </div>
@@ -529,17 +518,23 @@
 
                 {config.enableHumanVerification && (
                   <div className="space-y-4 pl-4 border-l-2 border-blue-500/30 ml-4 animate-in fade-in">
-                    
+                    <Toggle label="Post RF check automatically on every post" description="Adds the public RF check comment to new posts. On by default." checked={config.enableAutoPostRfCheckComments} onChange={(v) => update('enableAutoPostRfCheckComments', v)} />
+                    <div className="p-4 rounded-xl border border-slate-700 bg-slate-800/50">
+                      <h4 className="font-semibold text-slate-200 mb-2">Delete verification bot comments after</h4>
+                      <input type="number" min="5" max="10080" step="5" value={config.verificationCommentDeleteAfterMinutes} onChange={(e) => update('verificationCommentDeleteAfterMinutes', parseInt(e.target.value || '1440'))} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:border-blue-500 focus:outline-none" />
+                      <p className="text-xs text-slate-500 mt-2">Minutes. The runtime purges only due hourly buckets instead of scanning every saved reminder.</p>
+                    </div>
                     <div className="p-4 rounded-xl border border-slate-700 bg-slate-800/50">
                       <h4 className="font-semibold text-slate-200 mb-2">Remind Unverified Users That Post or Comment</h4>
                       <RadioGroup 
                         selected={config.humanVerificationReminderInterval} 
                         onChange={(v) => update('humanVerificationReminderInterval', v)}
                         options={[
-                          { value: 'never', label: 'Never' },
-                          { value: '12h', label: 'Every 12h' },
+                          { value: 'every', label: 'Every time' },
                           { value: '1d', label: 'Daily' },
-                          { value: '1w', label: 'Weekly' }
+                          { value: '3d', label: 'Every 3 days' },
+                          { value: '7d', label: 'Weekly' },
+                          { value: '14d', label: 'Every 14 days' }
                         ]} 
                       />
                     </div>
@@ -553,7 +548,7 @@
                         
                         {config.approveVerificationRemovedWhenVerified && (
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-4 border-l-2 border-blue-500/30 ml-4 animate-in fade-in">
-                            <Slider label="Max Restored Posts" min={1} max={3} value={config.approveVerificationRemovedPostLimit} onChange={(v) => update('approveVerificationRemovedPostLimit', v)} />
+                            <Slider label="Max Restored Posts" min={1} max={5} value={config.approveVerificationRemovedPostLimit} onChange={(v) => update('approveVerificationRemovedPostLimit', v)} />
                             <Slider label="Max Restored Comments" min={1} max={10} value={config.approveVerificationRemovedCommentLimit} onChange={(v) => update('approveVerificationRemovedCommentLimit', v)} />
                           </div>
                         )}
@@ -628,47 +623,37 @@
               protectOpSelfReplies: config.protectOpSelfReplies,
               ownPostCommentGoodCap: config.protectOpSelfReplies ? config.ownPostCommentGoodCap : 3,
               enableFlairUpdates: config.enableFlairUpdates,
+              preserveCustomFlairText: config.preserveCustomFlairText,
+              showPostCommentCount: config.flairParts.includes('activity'),
+              colorFlairByReputation: config.colorFlairByReputation,
+              flairParts: config.flairParts.filter(p => p !== 'head' || config.preserveCustomFlairText),
+              enableReviewFilter: config.enableReviewFilter,
+              reviewFilterMinBadPoints: config.reviewFilterMinBadPoints,
+              reviewFilterCategories: config.reviewFilterCategories,
+              reviewFilterTriggers: config.reviewFilterCategories,
+              ignoreModerators: config.ignoreModerators,
+              ignoreApprovedUsers: config.ignoreApprovedUsers,
+              enableRemoveFilter: config.enableRemoveFilter,
+              removeFilterMinBadPoints: config.removeFilterMinBadPoints,
+              removeFilterCategories: config.removeFilterCategories,
+              removeFilterTriggers: config.removeFilterCategories,
+              removeIgnoreModerators: config.removeIgnoreModerators,
+              removeIgnoreApprovedUsers: config.removeIgnoreApprovedUsers,
+              enableAutoPostRfCheckComments: config.enableAutoPostRfCheckComments,
+              enableHumanVerification: config.enableHumanVerification,
+              enableVerifyHumanMenu: config.enableHumanVerification,
+              enableHumanVerificationBadge: config.enableHumanVerification,
+              verificationCommentDeleteAfterMinutes: config.verificationCommentDeleteAfterMinutes,
+              enableHumanVerificationReminder: config.enableHumanVerification && config.enableHumanVerificationReminder,
+              humanVerificationReminderInterval: config.humanVerificationReminderInterval,
+              verificationRemovePostsUntilVerified: config.enableHumanVerification && config.verificationRemovePostsUntilVerified,
+              verificationRemoveCommentsUntilVerified: config.enableHumanVerification && config.verificationRemoveCommentsUntilVerified,
+              approveVerificationRemovedWhenVerified: config.enableHumanVerification && config.approveVerificationRemovedWhenVerified,
+              approveVerificationRemovedPostLimit: config.approveVerificationRemovedPostLimit,
+              approveVerificationRemovedCommentLimit: config.approveVerificationRemovedCommentLimit,
+              verificationRestorePostLimit: config.approveVerificationRemovedPostLimit,
+              verificationRestoreCommentLimit: config.approveVerificationRemovedCommentLimit
             };
-
-            if (config.enableFlairUpdates) {
-              exportObj.preserveCustomFlairText = config.preserveCustomFlairText;
-              exportObj.showPostCommentCount = config.flairParts.includes('activity');
-              exportObj.colorFlairByReputation = config.colorFlairByReputation;
-              exportObj.flairParts = config.flairParts.filter(p => p !== 'head' || config.preserveCustomFlairText);
-            }
-
-            exportObj.enableReviewFilter = config.enableReviewFilter;
-            if (config.enableReviewFilter) {
-              exportObj.reviewFilterMinBadPoints = config.reviewFilterMinBadPoints;
-              exportObj.reviewFilterCategories = config.reviewFilterCategories;
-              exportObj.ignoreModerators = config.ignoreModerators;
-              exportObj.ignoreApprovedUsers = config.ignoreApprovedUsers;
-            }
-
-            exportObj.enableRemoveFilter = config.enableRemoveFilter;
-            if (config.enableRemoveFilter) {
-              exportObj.removeFilterMinBadPoints = config.removeFilterMinBadPoints;
-              exportObj.removeFilterCategories = config.removeFilterCategories;
-              exportObj.removeIgnoreModerators = config.removeIgnoreModerators;
-              exportObj.removeIgnoreApprovedUsers = config.removeIgnoreApprovedUsers;
-            }
-
-            exportObj.enableHumanVerification = config.enableHumanVerification;
-            if (config.enableHumanVerification) {
-              exportObj.enableVerifyHumanMenu = true;
-              exportObj.enableHumanVerificationReminder = config.humanVerificationReminderInterval !== 'never';
-              if (config.humanVerificationReminderInterval !== 'never') {
-                exportObj.humanVerificationReminderInterval = config.humanVerificationReminderInterval;
-              }
-              exportObj.verificationRemovePostsUntilVerified = config.verificationRemovePostsUntilVerified;
-              exportObj.verificationRemoveCommentsUntilVerified = config.verificationRemoveCommentsUntilVerified;
-              
-              if (config.approveVerificationRemovedWhenVerified && (config.verificationRemovePostsUntilVerified || config.verificationRemoveCommentsUntilVerified)) {
-                exportObj.approveVerificationRemovedWhenVerified = true;
-                exportObj.approveVerificationRemovedPostLimit = config.approveVerificationRemovedPostLimit;
-                exportObj.approveVerificationRemovedCommentLimit = config.approveVerificationRemovedCommentLimit;
-              }
-            }
 
             const jsonString = JSON.stringify(exportObj, null, 2);
 
