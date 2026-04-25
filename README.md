@@ -1,5 +1,4 @@
-# reputation-flair-config
-configurator for Reputation Flair
+# Reputation Flair FAQ
 
 <!--
 Renderer tokens for config-aware FAQ output
