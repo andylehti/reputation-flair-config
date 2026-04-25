@@ -1,68 +1,10 @@
 # Reputation Flair FAQ
 
-<!--
-Renderer tokens for config-aware FAQ output
-
-Use these placeholders in the app/help renderer:
-- {{status:key|enabled text|disabled text}} -> render enabled text with a green dot, disabled text with a red dot
-- {{value:key}} -> render the current config value (for arrays, render a readable comma-separated list if possible)
-- {{showIf:key}}...{{/showIf}} -> only render when enabled
-- {{showIfNot:key}}...{{/showIfNot}} -> only render when disabled
-- {{strikeIfDisabled:key}}...{{/strikeIfDisabled}} -> if disabled, dim or strikethrough this block
-
-Suggested config keys to support in the renderer:
-- enableHighTrafficMode
-- customBadTerms
-- enableExtremeNormalization
-- updateReputationModNotes
-- enableFlairUpdates
-- preserveCustomFlairText
-- showPostCommentCount
-- colorFlairByReputation
-- style
-- flairParts
-- negativeScoreFade
-- streakMode
-- threshRegular
-- threshPro
-- threshElite
-- enableReviewFilter
-- reviewFilterMinBadPoints
-- reviewFilterCategories
-- ignoreModerators
-- ignoreApprovedUsers
-- enableRemoveFilter
-- removeFilterMinBadPoints
-- removeFilterCategories
-- removeIgnoreModerators
-- removeIgnoreApprovedUsers
-- protectOpSelfReplies
-- ownPostCommentGoodCap
-- moderatorOnlyPerItemBadPointCap
-- enableHumanVerification
-- enableVerifyHumanMenu
-- enableHumanVerificationReminder
-- humanVerificationReminderInterval
-- verificationRemovePostsUntilVerified
-- verificationRemoveCommentsUntilVerified
-- approveVerificationRemovedWhenVerified
-
-Rendering suggestion:
-- Enabled status: 🟢
-- Disabled status: 🔴
-- Optional sections can be dimmed or struck through when disabled.
--->
-
 ## FAQ 01 — What does this app do?
 
 This app tracks contribution quality over time inside this subreddit. It measures good rep, bad rep, triggers, activity, reputation score, verification status, and bot-trigger behavior. It can also flag content for review, filter content from public view, update flair, and handle human verification.
 
 The goal is transparency, self-awareness, and accountability. It is designed to help users understand how they contribute, to make low-value discourse easier to spot over time, and to make troll-like or bot-like behavior patterns easier to recognize.
-
-Current subreddit settings:
-- {{status:enableFlairUpdates|Flair updates are enabled here.|Flair updates are disabled here.}}
-- {{status:updateReputationModNotes|RFstats mod notes are enabled here.|RFstats mod notes are disabled here.}}
-- {{status:enableHumanVerification|Human verification is enabled here.|Human verification is disabled here.}}
 
 ---
 
@@ -103,11 +45,6 @@ Variables:
 * **scoreCeiling** = the maximum good rep points one item can receive.
 
 Plain English: the app reads the item, checks discourse triggers, calculates good rep and bad rep, applies protections and reductions, decides whether moderation rules or verification rules apply, calculates scores through an algorithm and margin of error, then updates stats and flair.
-
-Current subreddit settings:
-- Bad rep decay level here is {{value:negativeScoreFade}}.
-- {{status:enableHighTrafficMode|High-traffic mode is enabled here.|High-traffic mode is disabled here.}}
-- {{status:updateReputationModNotes|RFstats mod notes update here.|RFstats mod notes do not update here.}}
 
 ---
 
@@ -165,7 +102,7 @@ What matters most is the average pattern over time. The more someone engages, th
 
 **❌ Failed Verifications** shows how many recent verification attempts failed.
 
-**🤖 Bot Triggers** are behavioral signals, not wording-based discourse signals. They reflect suspicious behavior patterns, posting/commenting context, and related verification outcomes. They are meant to signal automation-like or highly unusual account behavior without exposing the inner anti-bot rules.
+**🤖 Bot Triggers** are behavioral signals. They reflect suspicious behavior patterns, posting/commenting context, and related verification outcomes.
 
 ---
 
@@ -342,12 +279,6 @@ Several things can change the final result.
 
 **OP self-reply protection:** if enabled, and the user comments on their own post, good rep points are capped to `ownPostCommentGoodCap`, bad rep points are forced to `0`, and category flags are cleared. Formula: `earnedGood = min(earnedGood, ownPostCommentGoodCap)`, `badReduced = 0`, `flags = 0`.
 
-Current subreddit settings:
-- Bad rep decay level here is {{value:negativeScoreFade}}.
-- {{status:protectOpSelfReplies|OP self-reply protection is enabled here.|OP self-reply protection is disabled here.}}
-- {{showIf:protectOpSelfReplies}}Current OP self-reply good-point cap: {{value:ownPostCommentGoodCap}}.{{/showIf}}
-- Current streak mode here is {{value:streakMode}}.
-
 ---
 
 ## FAQ 13 — What do good rep contributions and bad rep contributions mean?
@@ -429,18 +360,6 @@ What can affect review, removal, and exemptions:
 - verification rules can apply after normal removal rules
 - moderators can choose whether very high-risk content is flagged or removed by changing the thresholds
 
-Current subreddit settings:
-- {{status:enableReviewFilter|Review is enabled here.|Review is disabled here.}}
-- Review thresholds here are {{value:reviewFilterMinBadPoints}} points or {{value:reviewFilterCategories}} categories.
-- {{status:enableRemoveFilter|Removal is enabled here.|Removal is disabled here.}}
-- Removal thresholds here are {{value:removeFilterMinBadPoints}} points or {{value:removeFilterCategories}} categories.
-- {{status:ignoreModerators|Moderators are exempt from review here.|Moderators are not exempt from review here.}}
-- {{status:ignoreApprovedUsers|Approved users are exempt from review here.|Approved users are not exempt from review here.}}
-- {{status:removeIgnoreModerators|Moderators are exempt from removal here.|Moderators are not exempt from removal here.}}
-- {{status:removeIgnoreApprovedUsers|Approved users are exempt from removal here.|Approved users are not exempt from removal here.}}
-- {{status:protectOpSelfReplies|OP self-reply protection is enabled here.|OP self-reply protection is disabled here.}}
-- Moderator per-item bad-point cap here is {{value:moderatorOnlyPerItemBadPointCap}}.
-
 ---
 
 ## FAQ 16 — What happens if content is blocked for verification?
@@ -453,15 +372,6 @@ Important rules if both verification is enabled and gated participation is enabl
 - if the content is blocked only because the user is not verified, it can be handled under the verification rules instead
 - if restore-after-verification is enabled, previously verification-removed items can be restored after the user becomes verified
 - if post blocking or comment blocking is on, reminder comments may be turned off because blocking takes priority
-
-Current subreddit settings:
-- {{status:enableHumanVerification|Human verification is enabled here.|Human verification is disabled here.}}
-- {{status:enableVerifyHumanMenu|Users can open the verification flow from item menus here.|Users do not get a verification menu action here.}}
-- {{status:enableHumanVerificationReminder|Reminder comments are enabled here.|Reminder comments are disabled here.}}
-- {{showIf:enableHumanVerificationReminder}}Reminder interval here is {{value:humanVerificationReminderInterval}}.{{/showIf}}
-- {{status:verificationRemovePostsUntilVerified|Posts can be blocked until verified.|Posts are not blocked just for being unverified.}}
-- {{status:verificationRemoveCommentsUntilVerified|Comments can be blocked until verified.|Comments are not blocked just for being unverified.}}
-- {{status:approveVerificationRemovedWhenVerified|Verification-removed items can be restored after verification.|Verification-removed items are not auto-restored after verification.}}
 
 ---
 
@@ -485,13 +395,6 @@ If human verification is active and the account's verification state is verified
 
 If the account is not verified, the normal streak badge remains.
 
-Current subreddit settings:
-- {{status:enableFlairUpdates|Flair updates are enabled here.|Flair updates are disabled here.}}
-- {{status:enableHumanVerification|Verification can affect flair here.|Verification does not affect flair here.}}
-- {{status:preserveCustomFlairText|Custom flair text is preserved here.|Custom flair text is not preserved here.}}
-- {{status:colorFlairByReputation|Flair color changes by reputation here.|Flair color does not change by reputation here.}}
-- {{status:showPostCommentCount|Contribution count is shown in flair here.|Contribution count is hidden from flair here.}}
-
 ---
 
 ## FAQ 19 — What does “since installation” mean?
@@ -511,9 +414,6 @@ Some visible updates may be delayed.
 
 This usually happens because high-traffic mode is enabled. High-traffic mode reduces unnecessary flair rewrites in busy communities and helps prevent hitting the database too aggressively.
 
-Current subreddit settings:
-- {{status:enableHighTrafficMode|High-traffic mode is enabled here.|High-traffic mode is disabled here.}}
-
 ---
 
 ## FAQ 21 — What is an RFstats mod note?
@@ -528,9 +428,6 @@ It is meant to give moderators a quick snapshot of:
 - what type of negative discourse they may be involved in, if any.
 
 It updates automatically when enabled.
-
-Current subreddit settings:
-- {{status:updateReputationModNotes|RFstats mod notes are enabled here.|RFstats mod notes are disabled here.}}
 
 ---
 
@@ -622,14 +519,6 @@ The exact visible flair fields depend on `flairParts`. The current builder suppo
 
 If human verification is active and the user is verified, the normal streak badge can be replaced with the verification badge.
 
-Current subreddit settings:
-- {{status:enableFlairUpdates|Flair updates are enabled here.|Flair updates are disabled here.}}
-- Current flair style here is {{value:style}}.
-- Visible flair parts here are {{value:flairParts}}.
-- {{status:showPostCommentCount|Contribution count is shown in flair here.|Contribution count is hidden from flair here.}}
-- {{status:colorFlairByReputation|Flair color changes by reputation here.|Flair color does not change by reputation here.}}
-- Current streak-tier thresholds here are {{value:threshRegular}}, {{value:threshPro}}, and {{value:threshElite}} days.
-
 ---
 
 ## FAQ 26 — What is the shortest explanation possible?
@@ -658,11 +547,6 @@ At a high level, the current code stores:
 - RFstats mod-note summaries when that feature is enabled, which is merely a tally of 7 category triggers, and other numerical stats.
 
 This data is used to calculate rep, show flair, track moderation outcomes, and keep subreddit-level totals consistent over time.
-
-Current subreddit settings:
-- {{status:updateReputationModNotes|RFstats mod notes are enabled here.|RFstats mod notes are disabled here.}}
-- {{status:enableFlairUpdates|Flair updates are enabled here.|Flair updates are disabled here.}}
-- {{status:enableHumanVerification|Verification data can be used here.|Verification data is not used here.}}
 
 ---
 
@@ -740,11 +624,6 @@ That verification-removal metadata can include:
 
 It does **not** need to keep a full private copy of the removed post or comment text in order to do that.
 
-Current subreddit settings:
-- {{status:enableRemoveFilter|Normal removal is enabled here.|Normal removal is disabled here.}}
-- {{status:enableHumanVerification|Verification is enabled here.|Verification is disabled here.}}
-- {{status:approveVerificationRemovedWhenVerified|Verification-removed items can be restored here.|Verification-removed items are not auto-restored here.}}
-
 ---
 
 ## FAQ 31 — What data is visible to moderators, and what stays internal?
@@ -764,5 +643,4 @@ Some data is surfaced to moderators, and some stays internal.
 - verification-restoration tracking
 - cached counters and daily snapshots
 
-So the app does keep internal moderation state, but that is different from publishing a full public log of everything it reads.
-
+So the app does keep internal moderation state which context is thrown away, but that is different from publishing a full public log of everything it reads.
