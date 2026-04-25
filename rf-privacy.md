@@ -1,5 +1,7 @@
 # Privacy Policy for Reputation Flair
 
+***Last updated:** April 25, 2026*
+
 This Privacy Policy explains how Reputation Flair collects, uses, stores, shares, and deletes information when you use the Reputation Flair Devvit application (the “App” or “Service”).
 
 This application may be referred to interchangeably as “Reputation Flair” (“RF”), “Reputation Flair System” (“RFS”), “reputation-flair,” “reputation_flair,” “Bot Shield,” “Human Verification Module,” “Subreddit Stats by Reputation Flair,” or the “Reputation Portal,” including any capitalization or formatting variations thereof, all of which refer to the same underlying system and service (collectively, “Reputation Flair,” “the App,” “the Service,” “we,” “us,” or “our”).
